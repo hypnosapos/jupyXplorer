@@ -1,0 +1,9 @@
+{
+    "dataset": [
+        "path/to/json"
+    ],
+    "fields": [
+        {"name": "field1", "type": "numeric"},
+        {"name": "field2", "type": "categorical"}
+    ]
+}
