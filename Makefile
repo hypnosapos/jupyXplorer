@@ -27,6 +27,9 @@ clean-pyc: ## remove Python file artifacts
 clean-test: ## remove test and coverage artifacts
 	rm -rf .tox .coverage htmlcov coverage-reports
 
+clean-output: ## remove output files
+	rm -rf output/
+
 build-test-images: ## Build nested docker images for testing porpouses
 	@ $(foreach py_env,\
 		$(PY_ENVS),\

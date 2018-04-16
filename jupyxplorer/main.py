@@ -18,6 +18,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, '../output')
 
 
 def main(argv=sys.argv[1:]):
@@ -28,6 +29,9 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
     data = load_yml(args.config_file)
     if validate_data(data):
+        if not os.path.exists(OUTPUT_DIR):
+            os.makedirs(OUTPUT_DIR)
+
         for field in data["fields"]:
             c = Config()
             c.FillName.field = field["name"]
@@ -37,8 +41,9 @@ def main(argv=sys.argv[1:]):
             exporter = NotebookExporter(config=c)
             notebook = nbformat.read(os.path.join(BASE_DIR,
                                                   '../notebooks/{}.ipynb'.format(field["type"])), as_version=4)
-
-            print(exporter.from_notebook_node(notebook)[0])
+            nbfile = open(OUTPUT_DIR+'/exploration_{}.ipynb'.format(field["type"]), 'w')
+            nbfile.write(exporter.from_notebook_node(notebook)[0])
+            nbfile.close()
     elif type(data) is str:
         LOG.error("YAMLError: {}".format(data))
     else:
