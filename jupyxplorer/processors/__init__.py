@@ -4,6 +4,7 @@
 from nbconvert.preprocessors import Preprocessor
 from traitlets import Unicode
 
+
 class FillName(Preprocessor):
     """A preprocessor to fill the name of a field on some of the cells of a notebook"""
 

@@ -35,7 +35,8 @@ def main(argv=sys.argv[1:]):
             c.FillName.enabled = True
 
             exporter = NotebookExporter(config=c)
-            notebook = nbformat.read(os.path.join(BASE_DIR, '../notebooks/{}.ipynb'.format(field["type"])), as_version=4)
+            notebook = nbformat.read(os.path.join(BASE_DIR,
+                                                  '../notebooks/{}.ipynb'.format(field["type"])), as_version=4)
 
             print(exporter.from_notebook_node(notebook)[0])
     elif type(data) is str:
