@@ -2,10 +2,12 @@ version: '3.3'
 
 services:
   jupyxplorer:
-    depends_on:
-    build: ./Dockerfile
-    image: hypnosapos/jupyxplorer:${DOCKER_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    image: hypnosapos/jupyxplorer:latest
     command: >-
-      jupyxplorer -c /tmp/config.yaml -o xxxxxx
+      bash -c 'set -e; jupyxplorer -c /tmp/config.yaml;
+      [ -f ".output/exploration_cat.ipynb" ] && [ -f ".output/exploration_num.ipynb" ]'
     volumes:
-    - ./tests/e2e/sample_config.yaml:/tmp/config.yaml
+    - ./sample_config.yaml:/tmp/config.yaml:ro

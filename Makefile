@@ -39,6 +39,10 @@ build-test-images: ## Build nested docker images for testing porpouses
 test: build-test-images ## run tests, based on docker
 	@ $(foreach py_env,$(PY_ENVS),docker run $(DOCKER_ORG)/jupyxplorer-py$(py_env)-test ./entry.sh test;)
 
+test-e2e: ## End2End
+	@docker-compose -f tests/e2e/docker-compose.yaml up --exit-code-from jupyxplorer
+	@docker-compose -f tests/e2e/docker-compose.yaml down
+
 build: ## build the wheel :)
 	@docker build -t $(DOCKER_ORG)/jupyxplorer .
 
