@@ -1,22 +1,17 @@
 .PHONY: help clean clean-build clean-pyc clean-test test build install release codecov doc
 .DEFAULT_GOAL := help
 
-# AutoDoc
-define PRINT_HELP_PYSCRIPT
-import re, sys
+DOCKER_ORG        ?= hypnosapos
+DOCKER_IMAGE      ?= jupyxplorer
+DOCKER_USERNAME   ?= letigo
+DOCKER_PASSWORD   ?= topsecret
+PY_ENVS           ?= 3.5 3.6
+DEFAULT_PY_ENV    ?= 3.5
 
-for line in sys.stdin:
-	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
-	if match:
-		target, help = match.groups()
-		print("%-20s %s" % (target, help))
-endef
-export PRINT_HELP_PYSCRIPT
 
-help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -rf build dist .eggs .cache docs/build
@@ -32,8 +27,13 @@ clean-pyc: ## remove Python file artifacts
 clean-test: ## remove test and coverage artifacts
 	rm -rf .tox .coverage htmlcov coverage-reports
 
-test: ## run tests on every Python version with tox
-	@tox
+build-test-images: ## Build nested docker images for testing porpouses
+	@ $(foreach py_env,\
+		$(PY_ENVS),\
+		docker build --build-arg PY_VERSION=$(py_env) -t $(DOCKER_ORG):jupyxplorer-py$(py_env)-test -f Dockerfile.test .;)
+
+test: build-test-images ## run tests, based on docker
+	@ $(foreach py_env,$(PY_ENVS),docker run $(DOCKER_ORG):cartpole-py$(py_env)-test;)
 
 build: ## build the wheel :)
 	@tox -e build
