@@ -1,8 +1,17 @@
+import logging
+import sys
+
 from traitlets import Unicode
 from traitlets.config import Config
 from nbconvert.preprocessors import Preprocessor
 from nbconvert.exporters import NotebookExporter
 import nbformat
+
+from jupyxplorer.parser import load_yml, validate_data, parser_errors
+
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class FillName(Preprocessor):
@@ -17,12 +26,19 @@ class FillName(Preprocessor):
         return nb, resources
 
 
-c = Config()
-c.FillName.field = 'acquirer'
-c.NotebookExporter.preprocessors = [FillName]
-c.FillName.enabled = True
+data = load_yml('../sample_metadata.yaml')
+if validate_data(data):
+    c = Config()
+    c.FillName.field = 'acquirer'
+    c.NotebookExporter.preprocessors = [FillName]
+    c.FillName.enabled = True
 
-exporter = NotebookExporter(config=c)
-notebook = nbformat.read('../notebooks/index.ipynb', as_version=4)
+    exporter = NotebookExporter(config=c)
+    notebook = nbformat.read('../notebooks/numeric.ipynb', as_version=4)
 
-print(exporter.from_notebook_node(notebook)[0])
+    print(exporter.from_notebook_node(notebook)[0])
+elif type(data) is str:
+    logger.error("YAMLError: {}".format(data))
+else:
+    logger.error("SchemaError: your metadata file is incorrect. "
+                 "Please, fix the next errors: {}".format(parser_errors(data)))

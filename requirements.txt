@@ -1,1 +1,3 @@
+PyYAML
+cerberus
 nbconvert
