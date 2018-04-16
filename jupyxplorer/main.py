@@ -20,7 +20,11 @@ logger = logging.getLogger(__name__)
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='jupyxplorer')
-    data = load_yml('../sample_metadata.yaml')
+    parser.add_argument("-c", '--config-file',
+                        default='config.yaml',
+                        help='Config file. Defaults to config.yaml')
+    args = parser.parse_args(argv)
+    data = load_yml(args.config_file)
     if validate_data(data):
         for field in data["fields"]:
             c = Config()
@@ -45,9 +49,9 @@ if __name__ == "__main__":
         main(sys.argv[1:])
 
     except KeyboardInterrupt:
-        LOG.warning("... jupyxplorer command was interrupted")
+        logger.warning("... jupyxplorer command was interrupted")
         sys.exit(2)
     except Exception as ex:
-        LOG.error('Unexpected error: %s' % ex)
+        logger.error('Unexpected error: %s' % ex)
         sys.exit(1)
     sys.exit(0)

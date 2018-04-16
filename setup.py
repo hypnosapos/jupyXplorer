@@ -9,8 +9,12 @@ import os
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 with open(os.path.join(BASE_DIR, 'README.rst')) as f:
     README = f.read()
+
+with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
+    requirements = f.read().splitlines()
 
 setup(name='jupyXplorer',
       python_requires='>=3.5',
@@ -29,6 +33,7 @@ setup(name='jupyXplorer',
       url='https://github.com/hypnosapos/jupyXplorer',
       packages=find_packages(exclude=["tests", "docs"]),
       include_package_data=True,
+      install_requires=requirements,
       entry_points={
           'console_scripts': [
               "jupyxplorer = jupyxplorer.main:main"
