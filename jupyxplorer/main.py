@@ -28,15 +28,16 @@ class FillName(Preprocessor):
 
 data = load_yml('../sample_metadata.yaml')
 if validate_data(data):
-    c = Config()
-    c.FillName.field = 'acquirer'
-    c.NotebookExporter.preprocessors = [FillName]
-    c.FillName.enabled = True
+    for field in data["fields"]:
+        c = Config()
+        c.FillName.field = field["name"]
+        c.NotebookExporter.preprocessors = [FillName]
+        c.FillName.enabled = True
 
-    exporter = NotebookExporter(config=c)
-    notebook = nbformat.read('../notebooks/numeric.ipynb', as_version=4)
+        exporter = NotebookExporter(config=c)
+        notebook = nbformat.read("../notebooks/{}.ipynb".format(field["type"]), as_version=4)
 
-    print(exporter.from_notebook_node(notebook)[0])
+        print(exporter.from_notebook_node(notebook)[0])
 elif type(data) is str:
     logger.error("YAMLError: {}".format(data))
 else:
