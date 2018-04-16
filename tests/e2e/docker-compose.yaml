@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  jupyxplorer:
+    depends_on:
+    build: ./Dockerfile
+    image: hypnosapos/jupyxplorer:${DOCKER_TAG:-latest}
+    command: >-
+      jupyxplorer -c /tmp/config.yaml -o xxxxxx
+    volumes:
+    - ./tests/e2e/sample_config.yaml:/tmp/config.yaml

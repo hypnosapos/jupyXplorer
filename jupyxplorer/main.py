@@ -18,19 +18,24 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-OUTPUT_DIR = os.path.join(BASE_DIR, '../output')
 
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='jupyxplorer')
     parser.add_argument("-c", '--config-file',
                         default='config.yaml',
+                        required=True,
                         help='Config file. Defaults to config.yaml')
+    parser.add_argument("-o", '--output-dir',
+                        default='.output',
+                        required=False,
+                        help='Directory where output files will be saved to.')
     args = parser.parse_args(argv)
     data = load_yml(args.config_file)
+    output_dir = args.output_dir or ".output"
     if validate_data(data):
-        if not os.path.exists(OUTPUT_DIR):
-            os.makedirs(OUTPUT_DIR)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
         for field in data["fields"]:
             c = Config()
@@ -40,8 +45,8 @@ def main(argv=sys.argv[1:]):
 
             exporter = NotebookExporter(config=c)
             notebook = nbformat.read(os.path.join(BASE_DIR,
-                                                  '../notebooks/{}.ipynb'.format(field["type"])), as_version=4)
-            nbfile = open(OUTPUT_DIR+'/exploration_{}.ipynb'.format(field["type"]), 'w')
+                                                  'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
+            nbfile = open('{}/exploration_{}.ipynb'.format(output_dir, field["type"]), 'w')
             nbfile.write(exporter.from_notebook_node(notebook)[0])
             nbfile.close()
     elif type(data) is str:
