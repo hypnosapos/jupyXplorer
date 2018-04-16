@@ -33,7 +33,7 @@ build-test-images: ## Build nested docker images for testing porpouses
 		docker build --build-arg PY_VERSION=$(py_env) -t $(DOCKER_ORG):jupyxplorer-py$(py_env)-test -f Dockerfile.test .;)
 
 test: build-test-images ## run tests, based on docker
-	@ $(foreach py_env,$(PY_ENVS),docker run $(DOCKER_ORG):cartpole-py$(py_env)-test;)
+	@ $(foreach py_env,$(PY_ENVS),docker run $(DOCKER_ORG):jupyxplorer-py$(py_env)-test ./entry.sh test;)
 
 build: ## build the wheel :)
 	@tox -e build
