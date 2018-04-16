@@ -10,7 +10,7 @@ class FillName(Preprocessor):
     field = Unicode(u'field_name', help='name of the field to explore').tag(config=True)
 
     def preprocess(self, nb, resources):
-        self.log.info("I'll add %d as name of the field to explore", self.field)
+        self.log.info("I'll add {} as name of the field to explore".format(self.field))
         for cell in nb.cells:
             cell.source = cell.source.format(self.field)
         return nb, resources
