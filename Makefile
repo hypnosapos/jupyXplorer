@@ -1,4 +1,4 @@
-.PHONY: help clean clean-build clean-pyc clean-test test build install release codecov doc
+.PHONY: help clean clean-build clean-pyc clean-test clean-output test build install release codecov doc
 .DEFAULT_GOAL := help
 
 DOCKER_ORG        ?= hypnosapos
@@ -12,6 +12,7 @@ DEFAULT_PY_ENV    ?= 3.5
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+clean: clean-build clean-pyc clean-test clean-output ## remove all build, test, coverage, output files and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -rf build dist .eggs .cache docs/build
