@@ -1,23 +1,20 @@
+#Ignore metafiles
 .*
 !.gitignore
-!.travis.yml
-!.coveragerc
+!.circleci
+!.dockerignore
 !.gitchangelog.rc
 !.changelog.tpl
 
+#Ignore python reources
 __pycache__
 *.py[cod]
 *$py.class
-
-env/
-build/
-dist/
+/build/
+/dist/
+*.egg-*/
 eggs/
-.eggs/
+*.egg
 sdist/
 wheels/
-*.egg-info/
-*.egg
 
-htmlcov/
-coverage.xml

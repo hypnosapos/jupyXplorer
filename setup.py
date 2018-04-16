@@ -1,16 +1,4 @@
-# Copyright 2018 BBVA
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+
 """
 
 Auto Explorer setup
@@ -26,7 +14,7 @@ with open(os.path.join(BASE_DIR, 'README.rst')) as f:
 
 setup(name='jupyXplorer',
       python_requires='>=3.5',
-      version='1.0.0',
+      version="0.0.1",
       description="jupyXplorer: notebooks generator from data",
       license="MIT",
       long_description=README,
@@ -41,4 +29,9 @@ setup(name='jupyXplorer',
       url='https://github.com/hypnosapos/jupyXplorer',
       packages=find_packages(exclude=["tests", "docs"]),
       include_package_data=True,
+      entry_points={
+          'console_scripts': [
+              "jupyxplorer = jupyxplorer.main:main"
+          ]
+      },
       zip_safe=False)
