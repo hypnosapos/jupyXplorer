@@ -31,9 +31,8 @@ setup(name='jupyXplorer',
       ],
       author='Hypnosapos',
       url='https://github.com/hypnosapos/jupyXplorer',
-      packages=find_packages(exclude=["tests", "docs"]),
+      packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "docs"]),
       include_package_data=True,
-      package_data={},
       install_requires=requirements,
       entry_points={
           'console_scripts': [

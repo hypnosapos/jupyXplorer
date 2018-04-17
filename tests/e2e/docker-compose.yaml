@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile
     image: hypnosapos/jupyxplorer:latest
     command: >-
-      bash -c 'set -e; jupyxplorer -c /tmp/config.yaml;
-      [ -f ".output/exploration_cat.ipynb" ] && [ -f ".output/exploration_num.ipynb" ]'
+      bash -c 'set -e; jupyxplorer -c /tmp/e2e/sample_config.yaml -o /tmp/.outputs;
+      cmp --silent /tmp/e2e/exploration_cat.ipynb /tmp/.outputs/exploration_cat.ipynb &&
+      cmp --silent /tmp/e2e/exploration_num.ipynb /tmp/.outputs/exploration_num.ipynb'
     volumes:
-    - ./sample_config.yaml:/tmp/config.yaml:ro
+    - ./:/tmp/e2e:ro

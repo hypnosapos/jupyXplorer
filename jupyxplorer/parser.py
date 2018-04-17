@@ -32,8 +32,8 @@ SCHEMA = {
 v = Validator(SCHEMA)
 
 
-def load_yml(yml_path):
-    with open(yml_path, 'r') as stream:
+def load_yaml(yaml_path):
+    with open(yaml_path, 'r') as stream:
         try:
             return yaml.load(stream)
         except yaml.YAMLError as exception:

@@ -36,6 +36,18 @@ jobs:
         name: build
         command: |
           ~/repo/entry.sh build
+#  "docker":
+#    docker:
+#    - image: docker
+#    working_directory: ~/repo
+#    steps:
+#    - checkout
+#    - setup_remote_docker:
+#          docker_layer_caching: true
+#    - run:
+#        name: build and publish image
+#        command: |
+#          ~/repo/entry.sh docker-build && ~/repo/entry.sh docker-publish
 
 workflows:
   version: 2
@@ -43,3 +55,5 @@ workflows:
     jobs:
     - "3.5"
     - "3.6"
+#    - "docker":
+#        require: "3.6"

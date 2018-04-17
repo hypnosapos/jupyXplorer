@@ -11,11 +11,11 @@ import nbformat
 from nbconvert.exporters import NotebookExporter
 from traitlets.config import Config
 
-from .parser import load_yml, validate_data, parser_errors
+from .parser import load_yaml, validate_data, parser_errors
 from .processors import FillName
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -25,46 +25,46 @@ def main(argv=sys.argv[1:]):
     parser.add_argument("-c", '--config-file',
                         default='config.yaml',
                         required=True,
+                        type=load_yaml,
                         help='Config file. Defaults to config.yaml')
     parser.add_argument("-o", '--output-dir',
                         default='.output',
                         required=False,
                         help='Directory where output files will be saved to.')
-    args = parser.parse_args(argv)
-    data = load_yml(args.config_file)
-    output_dir = args.output_dir or ".output"
-    if validate_data(data):
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+    try:
+        args = parser.parse_args(argv)
+        data = args.config_file
+        output_dir = args.output_dir or ".output"
+        if validate_data(data):
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
 
-        for field in data["fields"]:
-            c = Config()
-            c.FillName.field = field["name"]
-            c.NotebookExporter.preprocessors = [FillName]
-            c.FillName.enabled = True
+            for field in data["fields"]:
+                c = Config()
+                c.FillName.field = field["name"]
+                c.NotebookExporter.preprocessors = [FillName]
+                c.FillName.enabled = True
 
-            exporter = NotebookExporter(config=c)
-            notebook = nbformat.read(os.path.join(BASE_DIR,
-                                                  'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
-            nbfile = open('{}/exploration_{}.ipynb'.format(output_dir, field["type"]), 'w')
-            nbfile.write(exporter.from_notebook_node(notebook)[0])
-            nbfile.close()
-    elif type(data) is str:
-        LOG.error("YAMLError: {}".format(data))
-    else:
-        LOG.error("SchemaError: your metadata file is incorrect. "
-                  "Please, fix the next errors: {}".format(parser_errors(data)))
+                exporter = NotebookExporter(config=c)
+                notebook = nbformat.read(os.path.join(BASE_DIR,
+                                                      'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
+                with open('{}/exploration_{}.ipynb'.format(output_dir, field["type"]), 'w') as nbfile:
+                    nbfile.write(exporter.from_notebook_node(notebook)[0])
+        elif type(data) is str:
+            error_msg = "YAMLError: {}".format(data)
+            raise ValueError(error_msg)
+        else:
+            error_msg = "SchemaError: your metadata file is incorrect. " \
+                        "Please, fix the next errors: {}".format(parser_errors(data))
+            raise ValueError(error_msg)
+    except KeyboardInterrupt:
+        logger.warning("... jupyxplorer command was interrupted")
+        sys.exit(2)
+    except Exception as ex:
+        logger.error('Unexpected error: %s' % ex)
+        sys.exit(1)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
-
-    try:
-        main(sys.argv[1:])
-
-    except KeyboardInterrupt:
-        LOG.warning("... jupyxplorer command was interrupted")
-        sys.exit(2)
-    except Exception as ex:
-        LOG.error('Unexpected error: %s' % ex)
-        sys.exit(1)
-    sys.exit(0)
+    main(sys.argv[1:])
