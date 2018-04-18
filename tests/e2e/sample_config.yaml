@@ -1,5 +1,5 @@
 dataset: "path/to/json"
-fields:
+fieldss:
   - name: "field1"
     type: "num"
   - name: "field2"

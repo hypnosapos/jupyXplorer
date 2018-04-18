@@ -1,5 +1,5 @@
 import yaml
-from cerberus import Validator
+from cerberus import validator, Validator
 
 SCHEMA = {
     'dataset': {
@@ -28,24 +28,26 @@ SCHEMA = {
     }
 }
 
+_v = Validator(SCHEMA)
 
-v = Validator(SCHEMA)
-
-
-def load_yaml(yaml_path):
+def load_yaml(yaml_path, schema_validation=True):
+    """
+    Read a YAML file
+    :param yaml_path: file path
+    :param schema_validation: validate file against YAML schema
+    :return: yaml document
+    """
     with open(yaml_path, 'r') as stream:
         try:
-            return yaml.load(stream)
+            document = yaml.load(stream)
+            if schema_validation:
+                if not _v.validate(document):
+                    raise Exception("YAML SchemaError: %s" % _v.errors)
+            return document
         except yaml.YAMLError as exception:
             if hasattr(exception, 'problem_mark'):
                 mark = exception.problem_mark
-                return "syntax incorrect. The error position is (line %s, column %s)" % (mark.line + 1, mark.column + 1)
-
-
-def validate_data(document):
-    return v.validate(document)
-
-
-def parser_errors(document):
-    v.validate(document)
-    return v.errors
+                raise Exception("YAML SyntaxError. The error position is (line %s, column %s)"
+                                "" % (mark.line + 1, mark.column + 1))
+        except validator.DocumentError as exc:
+            raise Exception("YAML SyntaxError: %s" % exc)

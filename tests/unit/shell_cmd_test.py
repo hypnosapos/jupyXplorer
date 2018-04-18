@@ -4,6 +4,8 @@
 import os
 import pytest
 
+from . import CONFIG_EXAMPLE, OUTPUT_DIR
+
 
 @pytest.fixture
 def scmd():
@@ -20,20 +22,7 @@ def fake_config():
 
 @pytest.fixture
 def correct_config():
-    data = {
-        "dataset": "path/to/json",
-        "fields": [
-            {
-                "name": "field1",
-                "type": "num"
-            },
-            {
-                "name": "field2",
-                "type": "cat"
-            }
-        ]
-    }
-    return data
+    return CONFIG_EXAMPLE
 
 
 def test_help(scmd, capsys):
@@ -63,49 +52,42 @@ def test_schema_validation_yaml(scmd, fake_config, mocker, caplog):
     config = 'config.yaml'
     conf = fake_config
     load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=conf)
-    validate_data_mock = mocker.patch.object(scmd, 'validate_data', return_value=False)
 
     with pytest.raises(SystemExit) as exc:
-        scmd.main(['-c', config])
+        scmd.main(['-c', config, '-o', OUTPUT_DIR])
 
     load_yaml_mock.assert_called_once_with(config)
-    validate_data_mock.assert_called_once_with(conf)
 
-    assert 'SchemaError' in caplog.text
+    assert 'Unexpected error' in caplog.text
     assert exc.value.code == 1
 
 
 def test_keyboard_interruptus(scmd, fake_config, mocker, caplog):
 
     config = 'config.yaml'
-    conf = fake_config
-    load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=conf)
-    validate_data_mock = mocker.patch.object(scmd, 'validate_data', side_effect=KeyboardInterrupt)
+    load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', side_effect=KeyboardInterrupt)
 
     with pytest.raises(SystemExit) as exc:
-        scmd.main(['-c', config])
+        scmd.main(['-c', config, '-o', OUTPUT_DIR])
 
     load_yaml_mock.assert_called_once_with(config)
-    validate_data_mock.assert_called_once_with(conf)
 
     assert 'interrupted' in caplog.text
     assert exc.value.code == 2
 
 
-def test_yaml_error(scmd, mocker, caplog):
+def test_invalid_document(scmd, mocker, caplog):
 
     config = 'config.yaml'
     conf = '{·}{.}'
     load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=conf)
-    validate_data_mock = mocker.patch.object(scmd, 'validate_data', return_value=False)
 
     with pytest.raises(SystemExit) as exc:
-        scmd.main(['-c', config])
+        scmd.main(['-c', config, '-o', OUTPUT_DIR])
 
     load_yaml_mock.assert_called_once_with(config)
-    validate_data_mock.assert_called_once_with(conf)
 
-    assert 'YAMLError' in caplog.text
+    assert 'Unexpected error' in caplog.text
     assert exc.value.code == 1
 
 
@@ -113,18 +95,15 @@ def test_happy_ending(scmd, correct_config, mocker):
 
     config = 'config.yaml'
     conf = correct_config
-    output_dir = '.output-test'
     load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=conf)
-    validate_data_mock = mocker.patch.object(scmd, 'validate_data', return_value=True)
 
     with pytest.raises(SystemExit) as exc:
-        scmd.main(['-c', config, '-o', output_dir])
+        scmd.main(['-c', config, '-o', OUTPUT_DIR])
 
     load_yaml_mock.assert_called_once_with(config)
-    validate_data_mock.assert_called_once_with(conf)
 
-    assert os.path.exists(output_dir)
+    assert os.path.exists(OUTPUT_DIR)
     expected_file_names = ['exploration_{}.ipynb'.format(name) for name in ['num', 'cat']]
-    file_names = os.listdir(output_dir)
+    file_names = os.listdir(OUTPUT_DIR)
     assert file_names == expected_file_names
     assert exc.value.code == 0
