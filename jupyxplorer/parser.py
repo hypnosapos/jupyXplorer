@@ -30,6 +30,7 @@ SCHEMA = {
 
 _v = Validator(SCHEMA)
 
+
 def load_yaml(yaml_path, schema_validation=True):
     """
     Read a YAML file

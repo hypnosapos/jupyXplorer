@@ -3,6 +3,7 @@ pytest-mock
 pytest
 pytest-pep8
 pytest-cov
-mock
 coverage
-behave
+twine
+sphinx
+sphinx_rtd_theme

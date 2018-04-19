@@ -23,7 +23,7 @@ build() {
 
 publish() {
 
-    echo;
+    twine upload --skip-existing dist/*
 
 }
 

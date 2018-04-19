@@ -3,8 +3,13 @@ ARG DIST="slim"
 
 FROM python:${PY_VERSION}-${DIST}
 WORKDIR /jupyxplorer
-ADD . .
+
+COPY requirements*.txt ./
 
 RUN pip install -U pip && \
-    pip install . && \
+    pip install -r requirements.txt
+
+ADD . .
+
+RUN pip install . && \
     rm -rf /root/.cache
