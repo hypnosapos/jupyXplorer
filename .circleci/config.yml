@@ -1,15 +1,23 @@
+# NOTE: Activate 2 nodes in parallel on CircleCI
 version: 2
 jobs:
-  "3.5":
+  "3.6":
     docker:
     - image: python:3.5-slim
     working_directory: ~/repo
     steps:
     - checkout
+    - restore_cache:
+        keys:
+        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
     - run:
         name: install dependencies
         command: |
           pip install -r requirements.txt -r requirements-dev.txt
+    - save_cache:
+        key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        paths:
+        - /root/.cache
     - run:
         name: test
         command: |
@@ -18,16 +26,27 @@ jobs:
         name: build
         command: |
           ~/repo/entry.sh build
-  "3.6":
+    - run:
+        name: install
+        command: |
+          pip install ~/repo
+  "3.5":
     docker:
     - image: python:3.6-slim
     working_directory: ~/repo
     steps:
     - checkout
+    - restore_cache:
+        keys:
+        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements.txt" }}
     - run:
         name: install dependencies
         command: |
           pip install -r requirements.txt -r requirements-dev.txt
+    - save_cache:
+        key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        paths:
+        - /root/.cache
     - run:
         name: test
         command: |
@@ -36,18 +55,46 @@ jobs:
         name: build
         command: |
           ~/repo/entry.sh build
-#  "docker":
-#    docker:
-#    - image: docker
-#    working_directory: ~/repo
-#    steps:
-#    - checkout
-#    - setup_remote_docker:
-#          docker_layer_caching: true
-#    - run:
-#        name: build and publish image
-#        command: |
-#          ~/repo/entry.sh docker-build && ~/repo/entry.sh docker-publish
+    - run:
+        name: codecov
+        command: |
+          ~/repo/entry.sh codecov
+    - run:
+        name: install
+        command: |
+          pip install ~/repo
+  "python-release":
+    docker:
+    - image: python:3.5-slim
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+    - run:
+        name: install dependencies
+        command: |
+          pip install -r requirements-dev.txt
+    - run:
+        name: release
+        command: |
+          ~/repo/entry.sh publish
+  "docker-release":
+    docker:
+    - image: docker:${DOCKER_VERSION}
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - setup_remote_docker:
+        docker_layer_caching: true
+    - run:
+        name: build and publish docker image
+        command: |
+          docker login -u=${DOCKER_USERNAME} -p=${DOCKER_PASSWORD}
+          docker build -t hypnosapos/jupyxplorer:latest -t hypnosapos/jupyxplorer:${CIRCLE_TAG} .
+          docker push hypnosapos/jupyxplorer:${CIRCLE_TAG}
+          docker push hypnosapos/jupyxplorer:latest
 
 workflows:
   version: 2
@@ -55,5 +102,17 @@ workflows:
     jobs:
     - "3.5"
     - "3.6"
-#    - "docker":
-#        require: "3.6"
+    - "python-release":
+        requires:
+        - "3.5"
+        - "3.6"
+        filters:
+          branches:
+            only: master
+    - "docker-release":
+        requires:
+        - "3.5"
+        - "3.6"
+        filters:
+          tags:
+            only: /^v.*/
