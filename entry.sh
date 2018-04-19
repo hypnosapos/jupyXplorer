@@ -5,13 +5,13 @@ cd ${DIR}
 
 test() {
 
-    pytest --cov=jupyxplorer --pep8
+    pytest --cov=jupyxplorer --cov-fail-under 80 --pep8
 
 }
 
 codecov() {
 
-    codecov;
+    codecov
 
 }
 
