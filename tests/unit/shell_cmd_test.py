@@ -107,3 +107,17 @@ def test_happy_ending(scmd, correct_config, mocker):
     file_names = os.listdir(OUTPUT_DIR)
     assert file_names == expected_file_names
     assert exc.value.code == 0
+
+
+def test_make_dir(scmd, mocker):
+    config = 'config.yaml'
+    output_dir = '/path/inexistent'
+    conf = correct_config
+
+    mocker.patch.object(scmd, 'load_yaml', return_value=conf)
+    make_dirs_mock = mocker.patch.object(scmd.os, "makedirs", side_effect=SystemExit)
+
+    with pytest.raises(SystemExit):
+        scmd.main(['-c', config, '-o', output_dir])
+
+    make_dirs_mock.assert_called_once_with(output_dir)
