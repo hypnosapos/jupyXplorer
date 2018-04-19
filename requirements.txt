@@ -1,3 +1,10 @@
 PyYAML
 cerberus
-nbconvert
+nbconvert==5.3.1
+seaborn==0.8.1
+matplotlib==2.1.2
+pandas==0.22.0
+jupyter==1.0.0
+jupyter-client==5.2.1
+jupyter-console==5.2.0
+jupyter-core==4.4.0
