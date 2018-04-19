@@ -82,7 +82,7 @@ jobs:
           ~/repo/entry.sh publish
   "docker-release":
     docker:
-    - image: docker:${DOCKER_VERSION}
+    - image: docker
     working_directory: ~/repo
     steps:
     - checkout
