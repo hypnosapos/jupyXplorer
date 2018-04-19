@@ -105,7 +105,7 @@ def test_happy_ending(scmd, correct_config, mocker):
     assert os.path.exists(OUTPUT_DIR)
     expected_file_names = ['exploration_{}.ipynb'.format(name) for name in ['num', 'cat']]
     file_names = os.listdir(OUTPUT_DIR)
-    assert file_names == expected_file_names
+    assert sorted(file_names) == sorted(expected_file_names)
     assert exc.value.code == 0
 
 
