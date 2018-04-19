@@ -9,7 +9,7 @@ test() {
 
 }
 
-codecov() {
+_codecov() {
 
     codecov
 
@@ -37,7 +37,7 @@ case "$1" in
         ;;
   codecov)
         shift
-        codecov "$@"
+        _codecov "$@"
         exit $?
         ;;
   build)
