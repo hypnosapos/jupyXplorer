@@ -13,7 +13,7 @@ jobs:
     - run:
         name: install dependencies
         command: |
-          pip --user install -r requirements.txt -r requirements-dev.txt
+          pip install --user -r requirements.txt -r requirements-dev.txt
     - save_cache:
         key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
