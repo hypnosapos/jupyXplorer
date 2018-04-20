@@ -9,13 +9,13 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
     - run:
         name: install dependencies
         command: |
-          pip install --user -r requirements.txt -r requirements-dev.txt
+          pip install -r requirements.txt -r requirements-dev.txt
     - save_cache:
-        key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        key: pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
         - ~/.cache
     - run:
@@ -38,13 +38,13 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements.txt" }}
+        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements.txt" }}
     - run:
         name: install dependencies
         command: |
-          pip install --user -r requirements.txt -r requirements-dev.txt
+          pip install -r requirements.txt -r requirements-dev.txt
     - save_cache:
-        key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        key: pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
         - ~/.cache
     - run:
@@ -78,7 +78,7 @@ jobs:
         at: ~
     - restore_cache:
         keys:
-        - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
     - run:
         name: install dependencies
         command: |
