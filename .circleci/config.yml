@@ -13,19 +13,19 @@ jobs:
     - run:
         name: install dependencies
         command: |
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip --user install -r requirements.txt -r requirements-dev.txt
     - save_cache:
         key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
-        - /root/.cache
+        - ~/.cache
     - run:
         name: test
         command: |
-          ~/repo/entry.sh test
+          ./entry.sh test
     - run:
         name: build
         command: |
-          ~/repo/entry.sh build
+          ./entry.sh build
     - run:
         name: install
         command: |
@@ -42,50 +42,59 @@ jobs:
     - run:
         name: install dependencies
         command: |
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip install --user -r requirements.txt -r requirements-dev.txt
     - save_cache:
         key: pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
-        - /root/.cache
+        - ~/.cache
     - run:
         name: test
         command: |
-          ~/repo/entry.sh test
+          ./entry.sh test
     - run:
         name: build
         command: |
-          ~/repo/entry.sh build
-    - run:
-        name: codecov
-        command: |
-          ~/repo/entry.sh codecov
+          ./entry.sh build
+    - persist_to_workspace:
+        root: ~
+        paths:
+        - repo
     - run:
         name: install
         command: |
           pip install ~/repo
+    - run:
+        name: codecov
+        command: |
+          apt-get update -y && apt-get install git -y
+          ./entry.sh codecov
+
   "python-release":
     docker:
     - image: python:3.5-slim
     working_directory: ~/repo
     steps:
-    - checkout
+    - attach_workspace:
+        at: ~
     - restore_cache:
         keys:
         - pycache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
     - run:
         name: install dependencies
         command: |
-          pip install -r requirements-dev.txt
+          pip install --user -r requirements-dev.txt
     - run:
         name: release
         command: |
-          ~/repo/entry.sh publish
+          ./entry.sh publish
+
   "docker-release":
     docker:
     - image: docker
     working_directory: ~/repo
     steps:
-    - checkout
+    - attach_workspace:
+        at: ~/repo
     - setup_remote_docker:
         docker_layer_caching: true
     - run:
@@ -114,5 +123,5 @@ workflows:
         - "3.5"
         - "3.6"
         filters:
-          tags:
-            only: /^v.*/
+          branches:
+            only: master
