@@ -101,8 +101,9 @@ jobs:
         name: build and publish docker image
         command: |
           printf 'y' | docker login -u=${DOCKER_USERNAME} -p=${DOCKER_PASSWORD}
-          docker build -t hypnosapos/jupyxplorer:latest -t hypnosapos/jupyxplorer:${CIRCLE_TAG} .
-          docker push hypnosapos/jupyxplorer:${CIRCLE_TAG}
+          export DOCKER_TAG="$(echo $CIRCLE_SHA1 | cut -c -7)"
+          docker build -t hypnosapos/jupyxplorer:latest -t hypnosapos/jupyxplorer:${DOCKER_TAG} .
+          docker push hypnosapos/jupyxplorer:${DOCKER_TAG}
           docker push hypnosapos/jupyxplorer:latest
 
 workflows:
