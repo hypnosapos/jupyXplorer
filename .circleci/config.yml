@@ -82,7 +82,7 @@ jobs:
     - run:
         name: install dependencies
         command: |
-          pip install --user -r requirements-dev.txt
+          pip install -r requirements-dev.txt
     - run:
         name: release
         command: |
@@ -100,7 +100,7 @@ jobs:
     - run:
         name: build and publish docker image
         command: |
-          docker login -u=${DOCKER_USERNAME} -p=${DOCKER_PASSWORD}
+          printf 'y' | docker login -u=${DOCKER_USERNAME} -p=${DOCKER_PASSWORD}
           docker build -t hypnosapos/jupyxplorer:latest -t hypnosapos/jupyxplorer:${CIRCLE_TAG} .
           docker push hypnosapos/jupyxplorer:${CIRCLE_TAG}
           docker push hypnosapos/jupyxplorer:latest
