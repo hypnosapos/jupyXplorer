@@ -13,6 +13,7 @@ from traitlets.config import Config
 
 from jupyxplorer.parser import load_yaml
 from jupyxplorer.processors import FillName, InstallRequirements
+from jupyxplorer.docker import execute
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,14 +29,26 @@ def main(argv=sys.argv[1:]):
                             required=True,
                             type=load_yaml,
                             help='Config file. Defaults to config.yaml.')
+
         parser.add_argument("-o", '--output-dir',
                             default='.output',
                             required=False,
                             help='Directory where output files will be saved to.')
 
+        parser.add_argument("-i", '--input-dir',
+                            default='.input',
+                            required=False,
+                            help='Directory where output files will be saved to.')
+
+        parser.add_argument("-e", "--execute",
+                            required=False,
+                            action='store_true',
+                            help="Execute notebooks generated. Note: Requires a docker daemon running.")
+
         args = parser.parse_args(argv)
         data = args.config_file
         output_dir = args.output_dir or ".output"
+        input_dir = args.input_dir or ".input"
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -51,7 +64,11 @@ def main(argv=sys.argv[1:]):
                                                   'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
             with open('{}/exploration_{}.ipynb'.format(output_dir, field["type"]), 'w') as nbfile:
                 nbfile.write(exporter.from_notebook_node(notebook)[0])
-
+        
+        # Running a jupyter container for executing new generated notebooks
+        if args.execute:
+            execute(output_dir=output_dir, input_dir=input_dir)
+        
     except KeyboardInterrupt:
         logger.warning("... jupyxplorer command was interrupted")
         sys.exit(2)
