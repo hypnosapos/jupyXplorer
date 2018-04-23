@@ -5,7 +5,7 @@ cd ${DIR}
 
 test() {
 
-    pytest --cov=jupyxplorer --cov-fail-under 80 --pep8
+    pytest --cov=jupyxplorer --cov-report term-missing --cov-fail-under 80 --pep8
 
 }
 

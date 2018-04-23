@@ -4,7 +4,7 @@ jupyXplorer
    :target: https://circleci.com/gh/hypnosapos/jupyXplorer/tree/master
    :alt: Build Status
 .. image:: https://img.shields.io/pypi/v/jupyxplorer.svg?style=flat-square
-   :target: https://pypi.org/project/modeldb-basic
+   :target: https://pypi.org/project/jupyXplorer
    :alt: Version
 .. image:: https://img.shields.io/pypi/pyversions/jupyxplorer.svg?style=flat-square
    :target: https://pypi.org/project/jupyXplorer
@@ -13,9 +13,9 @@ jupyXplorer
    :target: https://codecov.io/gh/hypnosapos/jupyXplorer
    :alt: Coverage
 
-This project is intended to generate some util notebooks to get data exploration.
+This project aims to generate some util notebooks to get data exploration.
 
-It's based on nbconvert and simply offer you a easy way to analise a feature (column) values of a dataset.
+It's based on nbconvert and simply offer you a easy way to analise a feature value (or set of them) of a dataset.
 
 Installation
 ------------
@@ -26,7 +26,8 @@ In order to install the utility just use pip:
 
     pip install jupyXplorer
 
-We provide you a docker image to get started quickly, take a look at ```` and select the best one fit your needs.
+We provide you a docker image to get started quickly, take a look at **hypnosapos/jupyxplorer** at
+`dockerhub<https://hub.docker.com/r/hypnosapos/jupyxplorer/>`_ and select the best one fit your needs.
 
 
 Usage
@@ -42,3 +43,10 @@ Before notebook generation take a look at our config file example (tests/e2e/sam
 All notebooks are ready at directory ".output" in the example above.
 
 Once notebooks are generated we can use them in your jupyter to show results of data analysis.
+
+Dev
+---
+
+The development lifecycle is managed by a **Makefile**, where all steps are executed through docker containers.
+Type ``make help`` to see all available commands.
+
