@@ -27,7 +27,7 @@ In order to install the utility just use pip:
     pip install jupyXplorer
 
 We provide you a docker image to get started quickly, take a look at **hypnosapos/jupyxplorer** at
-`dockerhub<https://hub.docker.com/r/hypnosapos/jupyxplorer/>`_ and select the best one fit your needs.
+`dockerhub <https://hub.docker.com/r/hypnosapos/jupyxplorer/>`_ and select the best one fit your needs.
 
 
 Usage
