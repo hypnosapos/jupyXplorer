@@ -1,4 +1,7 @@
 dataset: "path/to/json"
+requirements:
+  - requirements-exe.txt
+  - requirements.txt
 fields:
   - name: "field1"
     type: "num"

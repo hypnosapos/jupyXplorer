@@ -44,6 +44,11 @@ All notebooks are ready at directory ".output" in the example above.
 
 Once notebooks are generated we can use them in your jupyter to show results of data analysis.
 
+Requirements
+------------
+
+You have to put your requirement files on directory ".input". In the config yaml, you have to add filenames only.
+
 Dev
 ---
 

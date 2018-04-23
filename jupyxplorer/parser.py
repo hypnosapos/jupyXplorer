@@ -7,6 +7,13 @@ SCHEMA = {
         'required': True,
         'empty': False
     },
+    'requirements': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'string'
+        }
+    },
     'fields': {
         'type': 'list',
         'required': True,

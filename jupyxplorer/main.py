@@ -11,8 +11,8 @@ import nbformat
 from nbconvert.exporters import NotebookExporter
 from traitlets.config import Config
 
-from .parser import load_yaml
-from .processors import FillName
+from jupyxplorer.parser import load_yaml
+from jupyxplorer.processors import FillName, InstallRequirements
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ def main(argv=sys.argv[1:]):
                             default='config.yaml',
                             required=True,
                             type=load_yaml,
-                            help='Config file. Defaults to config.yaml')
+                            help='Config file. Defaults to config.yaml.')
         parser.add_argument("-o", '--output-dir',
                             default='.output',
                             required=False,
@@ -43,8 +43,8 @@ def main(argv=sys.argv[1:]):
         for field in data["fields"]:
             c = Config()
             c.FillName.field = field["name"]
-            c.NotebookExporter.preprocessors = [FillName]
-            c.FillName.enabled = True
+            c.InstallRequirements.requirements = data["requirements"]
+            c.NotebookExporter.preprocessors = [FillName, InstallRequirements]
 
             exporter = NotebookExporter(config=c)
             notebook = nbformat.read(os.path.join(BASE_DIR,
