@@ -9,20 +9,19 @@ DOCKER_TAG       ?= latest
 PY_ENVS          ?= 3.5 3.6
 DEFAULT_PY_ENV   ?= 3.5
 
-
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 clean-build:
 	rm -rf build dist .eggs .cache docs/build .output tests/.output-test
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
 	docker rm -f $$(docker ps -a -f "ancestor=$(DOCKER_ORG)/jupyxplorer:$(DOCKER_TAG)" --format '{{.Names}}') > /dev/null 2>&1 || echo "No containers"
-	docker rmi -f $(DOCKER_ORG)/jupyxplorer:$(DOCKER_TAG)
+	docker rmi -f $(DOCKER_ORG)/jupyxplorer:$(DOCKER_TAG) > /dev/null 2>&1 || echo "No images"
 	$(foreach py_env,\
 	  $(PY_ENVS),\
 	  docker rm -f $$(docker ps -a -f "ancestor=$(DOCKER_ORG)/jupyxplorer-py$(py_env)-test" --format '{{.Names}}') > /dev/null 2>&1 || echo "No containers";\
-	  docker rmi -f $(DOCKER_ORG)/jupyxplorer-py$(py_env)-test;)
+	  docker rmi -f $(DOCKER_ORG)/jupyxplorer-py$(py_env)-test > /dev/null 2>&1 || echo "No images";)
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -60,6 +59,6 @@ codecov: default-build ## Update coverage to codecov
 	@docker run -ti $(DOCKER_ORG)/jupyxplorer-py$(DEFAULT_PY_ENV)-test bash -c "./entry.sh test && ./entry.sh codecov"
 
 venv: ## Create a local virtualenv with default python version (supported 3.5 and 3.6)
-	python -m venv .venv
-	source .venv/bin/activate && pip install -U pip && pip install -r requirements.txt -r requirements-dev.txt
-	echo "\033[32m[[ Type 'source .venv/bin/activate' to activate virtualenv ]]\033[0m"
+	@python -m venv .venv
+	@. .venv/bin/activate && pip install -U pip && pip install -r requirements.txt -r requirements-dev.txt
+	@echo "\033[32m[[ Type '. .venv/bin/activate' to activate virtualenv ]]\033[0m"
