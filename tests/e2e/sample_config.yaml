@@ -1,10 +1,12 @@
 dataset:
-  source: "work/dataset.json"
+  source: "work/iris.json"
   type: json
 requirements:
 - "work/requirements-exe.txt"
 fields:
-- name: "field1"
+- name: "sepalLength"
   type: "num"
-- name: "field2"
+- name: "petalLength"
+  type: "num"
+- name: "species"
   type: "cat"

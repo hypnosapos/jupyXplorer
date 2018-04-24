@@ -2,6 +2,7 @@
 .*
 !.gitignore
 !.circleci
+!.input
 !.dockerignore
 !.gitchangelog.rc
 !.changelog.tpl

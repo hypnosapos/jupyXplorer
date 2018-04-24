@@ -8,7 +8,8 @@ services:
     image: hypnosapos/jupyxplorer:latest
     command: >-
       bash -c 'set -e; jupyxplorer -c /tmp/e2e/sample_config.yaml -o /tmp/.outputs;
-      cmp --silent /tmp/e2e/exploration_cat.ipynb /tmp/.outputs/exploration_cat.ipynb &&
-      cmp --silent /tmp/e2e/exploration_num.ipynb /tmp/.outputs/exploration_num.ipynb'
+      cmp --silent /tmp/e2e/exploration_cat_species.ipynb /tmp/.outputs/exploration_cat_species.ipynb &&
+      cmp --silent /tmp/e2e/exploration_num_petalLength.ipynb /tmp/.outputs/exploration_num_petalLength.ipynb &&
+      cmp --silent /tmp/e2e/exploration_num_sepalLength.ipynb /tmp/.outputs/exploration_num_sepalLength.ipynb'
     volumes:
     - ./:/tmp/e2e:ro

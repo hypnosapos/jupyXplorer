@@ -66,7 +66,7 @@ def main(argv=sys.argv[1:]):
             exporter = NotebookExporter(config=c)
             notebook = nbformat.read(os.path.join(BASE_DIR,
                                                   'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
-            with open('{}/exploration_{}.ipynb'.format(output_dir, field["type"]), 'w') as nbfile:
+            with open('{}/exploration_{}_{}.ipynb'.format(output_dir, field["type"], field["name"]), 'w') as nbfile:
                 nbfile.write(exporter.from_notebook_node(notebook)[0])
         
         # Running a jupyter container for executing new generated notebooks
