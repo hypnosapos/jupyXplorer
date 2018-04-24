@@ -3,9 +3,20 @@ from cerberus import validator, Validator
 
 SCHEMA = {
     'dataset': {
-        'type': 'string',
+        'type': 'dict',
         'required': True,
-        'empty': False
+        'schema': {
+            'source': {
+                 'type': 'string',
+                 'required': True,
+                 'empty': False
+                },
+            'type': {
+                 'type': 'string',
+                 'required': False,
+                 'empty': False
+            }
+        }
     },
     'requirements': {
         'type': 'list',

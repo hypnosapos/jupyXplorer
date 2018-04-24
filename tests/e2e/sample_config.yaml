@@ -1,9 +1,10 @@
-dataset: "path/to/json"
+dataset:
+  source: "work/dataset.json"
+  type: json
 requirements:
-  - requirements-exe.txt
-  - requirements.txt
+- "work/requirements-exe.txt"
 fields:
-  - name: "field1"
-    type: "num"
-  - name: "field2"
-    type: "cat"
+- name: "field1"
+  type: "num"
+- name: "field2"
+  type: "cat"

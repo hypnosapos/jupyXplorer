@@ -4,18 +4,20 @@ import docker
 def execute(**kwargs):
     client = docker.from_env()
 
-    volumes ={
-        kwargs["output_dir"]: {'bind': '/home/jovyan/.output', 'mode': 'rw'},
-        kwargs["input_dir"]: {'bind': '/home/jovyan/.input', 'mode': 'ro'}
+    con_out_dir = '/home/jovyan'
+
+    volumes = {
+        kwargs["output_dir"]: {'bind': con_out_dir, 'mode': 'rw'},
+        kwargs["input_dir"]: {'bind': '/home/jovyan/work', 'mode': 'ro'}
     }
 
     client.containers.run(
-        image="jupyter/base-notebook:latest",
+        image="jupyter/pyspark-notebook:latest",
         command="jupyter nbconvert"
         " --ExecutePreprocessor.interrupt_on_timeout=True"
         " --ExecutePreprocessor.allow_errors=True"
         " --Application.log_level='INFO'"
         " --ExecutePreprocessor.timeout=300"
-        " --execute {}".format(kwargs["output_dir"]),
+        " --execute {}/*.ipynb".format(con_out_dir),
         volumes=volumes
     )

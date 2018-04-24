@@ -12,7 +12,7 @@ from nbconvert.exporters import NotebookExporter
 from traitlets.config import Config
 
 from jupyxplorer.parser import load_yaml
-from jupyxplorer.processors import FillName, InstallRequirements
+from jupyxplorer.processors import Formatter, InstallRequirements
 from jupyxplorer.docker import execute
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -47,17 +47,21 @@ def main(argv=sys.argv[1:]):
 
         args = parser.parse_args(argv)
         data = args.config_file
-        output_dir = args.output_dir or ".output"
-        input_dir = args.input_dir or ".input"
+        output_dir = os.path.abspath(args.output_dir or ".output")
+        input_dir = os.path.abspath(args.input_dir or ".input")
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         for field in data["fields"]:
             c = Config()
-            c.FillName.field = field["name"]
+            c.Formatter.params = dict(
+                _field=field["name"],
+                _dataset_type=data['dataset']['type'],
+                _dataset_source=data['dataset']['source'],
+            )
             c.InstallRequirements.requirements = data["requirements"]
-            c.NotebookExporter.preprocessors = [FillName, InstallRequirements]
+            c.NotebookExporter.preprocessors = [Formatter, InstallRequirements]
 
             exporter = NotebookExporter(config=c)
             notebook = nbformat.read(os.path.join(BASE_DIR,
