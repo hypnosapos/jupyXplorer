@@ -1,23 +1,34 @@
+# -*- coding: utf-8 -*-
+# vim: tabstop=4 shiftwidth=4 softtabstop=4
+
 import docker
 
+DOCKER_IMAGE = "jupyter/pyspark-notebook:latest"
 
-def execute(**kwargs):
+DOCKER_COMMAND = "jupyter nbconvert" \
+    " --ExecutePreprocessor.interrupt_on_timeout=True" \
+    " --ExecutePreprocessor.allow_errors=True" \
+    " --Application.log_level='INFO'" \
+    " --ExecutePreprocessor.timeout=300" \
+    " --execute /home/jovyan/*.ipynb"
+
+DOCKER_VOLUMES = {
+    "output_dir": {'bind': '/home/jovyan', 'mode': 'rw'},
+    "input_dir": {'bind': '/home/jovyan/work', 'mode': 'ro'}
+}
+
+
+def execute(input_dir, output_dir):
+
     client = docker.from_env()
 
-    con_out_dir = '/home/jovyan'
-
     volumes = {
-        kwargs["output_dir"]: {'bind': con_out_dir, 'mode': 'rw'},
-        kwargs["input_dir"]: {'bind': '/home/jovyan/work', 'mode': 'ro'}
+        output_dir: DOCKER_VOLUMES['output_dir'],
+        input_dir: DOCKER_VOLUMES['input_dir']
     }
 
     client.containers.run(
-        image="jupyter/pyspark-notebook:latest",
-        command="jupyter nbconvert"
-        " --ExecutePreprocessor.interrupt_on_timeout=True"
-        " --ExecutePreprocessor.allow_errors=True"
-        " --Application.log_level='INFO'"
-        " --ExecutePreprocessor.timeout=300"
-        " --execute {}/*.ipynb".format(con_out_dir),
+        image=DOCKER_IMAGE,
+        command=DOCKER_COMMAND,
         volumes=volumes
     )

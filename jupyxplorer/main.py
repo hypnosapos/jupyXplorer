@@ -60,7 +60,7 @@ def main(argv=sys.argv[1:]):
                 _dataset_type=data['dataset']['type'],
                 _dataset_source=data['dataset']['source'],
             )
-            c.InstallRequirements.requirements = data["requirements"]
+            c.InstallRequirements.requirements = data.get("requirements", [])
             c.NotebookExporter.preprocessors = [Formatter, InstallRequirements]
 
             exporter = NotebookExporter(config=c)
@@ -68,11 +68,11 @@ def main(argv=sys.argv[1:]):
                                                   'notebooks/{}.ipynb'.format(field["type"])), as_version=4)
             with open('{}/exploration_{}_{}.ipynb'.format(output_dir, field["type"], field["name"]), 'w') as nbfile:
                 nbfile.write(exporter.from_notebook_node(notebook)[0])
-        
+
         # Running a jupyter container for executing new generated notebooks
         if args.execute:
-            execute(output_dir=output_dir, input_dir=input_dir)
-        
+            execute(input_dir, output_dir)
+
     except KeyboardInterrupt:
         logger.warning("... jupyxplorer command was interrupted")
         sys.exit(2)

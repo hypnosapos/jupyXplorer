@@ -20,11 +20,6 @@ def fake_config():
     return data
 
 
-@pytest.fixture
-def correct_config():
-    return CONFIG_EXAMPLE
-
-
 def test_help(scmd, capsys):
 
     with pytest.raises(SystemExit) as se:
@@ -62,7 +57,7 @@ def test_schema_validation_yaml(scmd, fake_config, mocker, caplog):
     assert exc.value.code == 1
 
 
-def test_keyboard_interruptus(scmd, fake_config, mocker, caplog):
+def test_keyboard_interruptus(scmd, mocker, caplog):
 
     config = 'config.yaml'
     load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', side_effect=KeyboardInterrupt)
@@ -91,11 +86,10 @@ def test_invalid_document(scmd, mocker, caplog):
     assert exc.value.code == 1
 
 
-def test_happy_ending(scmd, correct_config, mocker):
+def test_happy_ending(scmd, mocker):
 
     config = 'config.yaml'
-    conf = correct_config
-    load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=conf)
+    load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=CONFIG_EXAMPLE)
 
     with pytest.raises(SystemExit) as exc:
         scmd.main(['-c', config, '-o', OUTPUT_DIR])
@@ -103,8 +97,9 @@ def test_happy_ending(scmd, correct_config, mocker):
     load_yaml_mock.assert_called_once_with(config)
 
     assert os.path.exists(OUTPUT_DIR)
-    expected_file_names = ['exploration_{}.ipynb'.format(name) for name in ['num', 'cat']]
-    file_names = os.listdir(OUTPUT_DIR)
+    expected_file_names = ['exploration_{}_{}.ipynb'.format(entry['type'], entry['name'])
+                           for entry in CONFIG_EXAMPLE['fields']]
+    file_names = [f for f in os.listdir(OUTPUT_DIR) if os.path.isfile(os.path.join(OUTPUT_DIR, f))]
     assert sorted(file_names) == sorted(expected_file_names)
     assert exc.value.code == 0
 
@@ -112,12 +107,29 @@ def test_happy_ending(scmd, correct_config, mocker):
 def test_make_dir(scmd, mocker):
     config = 'config.yaml'
     output_dir = '/path/inexistent'
-    conf = correct_config
 
-    mocker.patch.object(scmd, 'load_yaml', return_value=conf)
+    mocker.patch.object(scmd, 'load_yaml', return_value=CONFIG_EXAMPLE)
     make_dirs_mock = mocker.patch.object(scmd.os, "makedirs", side_effect=SystemExit)
 
     with pytest.raises(SystemExit):
         scmd.main(['-c', config, '-o', output_dir])
 
     make_dirs_mock.assert_called_once_with(output_dir)
+
+
+def test_execute(scmd, mocker):
+
+    config = 'config.yaml'
+    load_yaml_mock = mocker.patch.object(scmd, 'load_yaml', return_value=CONFIG_EXAMPLE)
+    docker_execute_mock = mocker.patch.object(scmd, 'execute', return_value=None)
+
+    with pytest.raises(SystemExit) as exc:
+        scmd.main(['-c', config, '-o', OUTPUT_DIR, '-e'])
+
+    load_yaml_mock.assert_called_once_with(config)
+    docker_execute_mock.assert_called_once_with(
+        os.path.abspath(os.path.join(os.path.curdir, '.input')),
+        os.path.abspath(os.path.join(os.path.curdir, OUTPUT_DIR))
+    )
+
+    assert exc.value.code == 0

@@ -44,14 +44,22 @@ All notebooks are ready at directory ".output" in the example above.
 
 Once notebooks are generated we can use them in your jupyter to show results of data analysis.
 
+As we said above, you may use a docker container instead:
+
+.. code-block:: bash
+
+   docker run -it -v </path/my_config.yaml>:/tmp/my_config.yaml </path/output>:/tmp/output hypnosapos/jupyxplorer:latest jupyxplorer -c /tmp/my_config.yaml -o /tmp/output
+
+
 Requirements
 ------------
 
 You have to put your requirement files on directory ".input". In the config yaml, you have to add filenames only.
 
+
 Dev
 ---
 
-The development lifecycle is managed by a **Makefile**, where all steps are executed through docker containers.
+The development lifecycle is managed by a **Makefile** and CircleCI, where all steps are executed through docker containers.
 Type ``make help`` to see all available commands.
 

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# vim: tabstop=4 shiftwidth=4 softtabstop=4
+
 import yaml
 from cerberus import validator, Validator
 
@@ -7,14 +10,14 @@ SCHEMA = {
         'required': True,
         'schema': {
             'source': {
-                 'type': 'string',
-                 'required': True,
-                 'empty': False
-                },
+                'type': 'string',
+                'required': True,
+                'empty': False
+            },
             'type': {
-                 'type': 'string',
-                 'required': False,
-                 'empty': False
+                'type': 'string',
+                'required': False,
+                'empty': False
             }
         }
     },

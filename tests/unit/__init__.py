@@ -1,5 +1,11 @@
+# -*- coding: utf-8 -*-
+# vim: tabstop=4 shiftwidth=4 softtabstop=4
+
 CONFIG_EXAMPLE = {
-    "dataset": "path/to/json",
+    "dataset": {
+        "source": "path/to/json",
+        "type": "json"
+    },
     "fields": [
         {
             "name": "field1",
