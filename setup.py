@@ -18,7 +18,7 @@ with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
 
 setup(name='jupyXplorer',
       python_requires='>=3.5',
-      version="0.0.2",
+      version="0.0.3",
       description="jupyXplorer: notebooks generator from data",
       license="MIT",
       long_description=README,

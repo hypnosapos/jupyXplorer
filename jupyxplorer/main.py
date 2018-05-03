@@ -38,7 +38,7 @@ def main(argv=sys.argv[1:]):
         parser.add_argument("-i", '--input-dir',
                             default='.input',
                             required=False,
-                            help='Directory where output files will be saved to.')
+                            help='Directory where output files will be saved to. Defaults to directory ".input"')
 
         parser.add_argument("-e", "--execute",
                             required=False,

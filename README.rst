@@ -51,11 +51,15 @@ As we said above, you may use a docker container instead:
    docker run -it -v </path/my_config.yaml>:/tmp/my_config.yaml </path/output>:/tmp/output hypnosapos/jupyxplorer:latest jupyxplorer -c /tmp/my_config.yaml -o /tmp/output
 
 
-Requirements
-------------
+If you want to use some required files to execute notebooks before generation (**-e** or **--execute** argument), provide the value of argument "input-dir" (**--input-dir**, or the short form **-i**).
+Here you have an example:
 
-You have to put your requirement files on directory ".input". In the config yaml, you have to add filenames only.
 
+.. code-block:: bash
+
+    jupyxplorer -i .input -c config.yaml -o .output -e
+
+The resources under that directory would be particular requirement files for python and local dataset files.
 
 Dev
 ---
