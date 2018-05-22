@@ -40,7 +40,7 @@ Before notebook generation take a look at our config file example (tests/e2e/sam
 
     jupyxplorer -c config.yaml -o .output
 
-All notebooks are ready at directory ".output" in the example above.
+All notebooks will be ready in directory ".output" of the example above.
 
 Once notebooks are generated we can use them in your jupyter to show results of data analysis.
 

@@ -1,4 +1,4 @@
-.PHONY: help clean test test-e2e build release codecov venv
+.PHONY: help clean test test_e2e build venv
 .DEFAULT_GOAL := help
 
 DOCKER_ORG       ?= hypnosapos
