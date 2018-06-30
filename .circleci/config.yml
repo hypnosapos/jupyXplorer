@@ -1,38 +1,8 @@
 # NOTE: Activate 2 nodes in parallel on CircleCI
 version: 2
-jobs:
-  "3.6":
-    docker:
-    - image: python:3.5-slim
-    working_directory: ~/repo
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
-    - run:
-        name: install dependencies
-        command: |
-          pip install -r requirements.txt -r requirements-dev.txt
-    - save_cache:
-        key: pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
-        paths:
-        - ~/.cache
-    - run:
-        name: test
-        command: |
-          ./entry.sh test
-    - run:
-        name: build
-        command: |
-          ./entry.sh build
-    - run:
-        name: install
-        command: |
-          pip install ~/repo
-  "3.5":
-    docker:
-    - image: python:3.6-slim
+
+references:
+  container_config: &container_config
     working_directory: ~/repo
     steps:
     - checkout
@@ -55,19 +25,31 @@ jobs:
         name: build
         command: |
           ./entry.sh build
-    - persist_to_workspace:
-        root: /root
-        paths:
-        - repo
     - run:
         name: install
         command: |
           pip install ~/repo
+
+jobs:
+
+  "3.5":
+    docker:
+    - image: python:3.5-slim
+    <<: *container_config
+
+  "3.6":
+    docker:
+    - image: python:3.6-slim
+    <<: *container_config
     - run:
         name: codecov
         command: |
           apt-get update -y && apt-get install git -y
           ./entry.sh codecov
+    - persist_to_workspace:
+        root: /root
+        paths:
+        - repo
 
   "python-release":
     docker:
