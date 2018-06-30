@@ -2,54 +2,72 @@
 version: 2
 
 references:
-  container_config: &container_config
-    working_directory: ~/repo
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements.txt" }}
-    - run:
-        name: install dependencies
-        command: |
-          pip install -r requirements.txt -r requirements-dev.txt
-    - save_cache:
+  restore_cache_reqs: &restore_cache_reqs
+    restore_cache:
+      keys:
+      - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements.txt" }}
+  save_cache_reqs: &save_cache_reqs
+    save_cache:
         key: pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
         paths:
         - ~/.cache
-    - run:
-        name: test
-        command: |
-          ./entry.sh test
-    - run:
-        name: build
-        command: |
-          ./entry.sh build
-    - run:
-        name: install
-        command: |
-          pip install ~/repo
+  install_reqs: &install_reqs
+    run:
+      name: install dependencies
+      command: |
+        pip install -r requirements.txt -r requirements-dev.txt
+  test: &test
+    run:
+      name: test
+      command: |
+        ./entry.sh test
+  build: &build
+    run:
+      name: build
+      command: |
+        ./entry.sh build
+  install: &install
+    run:
+      name: install
+      command: |
+        pip install ~/repo
 
 jobs:
 
   "3.5":
     docker:
     - image: python:3.5-slim
-    <<: *container_config
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - *restore_cache_reqs
+    - *install_reqs
+    - *save_cache_reqs
+    - *test
+    - *build
+    - *install
 
   "3.6":
     docker:
     - image: python:3.6-slim
-    <<: *container_config
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - *restore_cache_reqs
+    - *install_reqs
+    - *save_cache_reqs
+    - *test
+    - *build
+    - persist_to_workspace:
+        root: /root
+        paths:
+        - repo
+    - *install
     - run:
         name: codecov
         command: |
           apt-get update -y && apt-get install git -y
           ./entry.sh codecov
-    - persist_to_workspace:
-        root: /root
-        paths:
-        - repo
 
   "python-release":
     docker:
@@ -58,9 +76,7 @@ jobs:
     steps:
     - attach_workspace:
         at: /root
-    - restore_cache:
-        keys:
-        - pip-cache-{{ arch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}
+    - *restore_cache_reqs
     - run:
         name: install dependencies
         command: |
