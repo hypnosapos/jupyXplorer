@@ -1,4 +1,3 @@
-
 """
 
 Auto Explorer setup
@@ -18,7 +17,7 @@ with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
 
 setup(name='jupyXplorer',
       python_requires='>=3.5',
-      version="0.0.3",
+      version=__import__('jupyxplorer').VERSION,
       description="jupyXplorer: notebooks generator from data",
       license="MIT",
       long_description=README,
@@ -26,6 +25,7 @@ setup(name='jupyXplorer',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Topic :: Scientific/Engineering :: Information Analysis'
       ],
