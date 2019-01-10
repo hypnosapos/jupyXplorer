@@ -1,4 +1,4 @@
-PyYAML==3.13
+PyYAML==4.2b4
 cerberus==1.2
 nbconvert==5.4.0
 docker==3.6.0
