@@ -5,6 +5,6 @@ pytest-pep8==1.0.6
 pytest-cov==2.5.1
 coverage==4.5.1
 twine==1.11.0
-codecov==2.0.15
+codecov==2.0.16
 bumpversion==0.5.3
 gitchangelog==3.0.3
